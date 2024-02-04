@@ -5,6 +5,8 @@ from sqlalchemy.orm import relationship
 from src.python.database.DatabaseCreator import DatabaseCreator
 from src.python.database.models.BaseModel import BaseModel
 
+if TYPE_CHECKING:
+    from src.python.dto.UserData import UserData
 
 _BACK_POPULATES_PARAMS = "user_model"
 
@@ -37,5 +39,11 @@ class UserModel(BaseModel, DatabaseCreator.Model):
         return UserModel(account_id = account_id, account_pw = account_pw)
 
     @staticmethod
-    def convert_to_dto(model):
-        pass
+    def convert_to_dto(model: "UserModel") -> "UserData":
+        from src.python.dto.UserData import UserData
+        converted_dict = BaseModel.delete_model_dict_key(
+            model_object_dict = model.get_all_data_by_dict()
+        )
+
+        return UserData.create_object(**converted_dict)
+

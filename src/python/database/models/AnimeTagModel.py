@@ -5,6 +5,8 @@ from sqlalchemy.orm import relationship
 from src.python.database.DatabaseCreator import DatabaseCreator
 from src.python.database.models.BaseModel import BaseModel
 
+if TYPE_CHECKING:
+    from src.python.dto.AnimeTagData import AnimeTagData
 
 _BACK_POPULATES_PARAMS = "anime_tag_model"
 
@@ -49,5 +51,10 @@ class AnimeTagModel(BaseModel, DatabaseCreator.Model):
         )
 
     @staticmethod
-    def convert_to_dto(model):
-        pass
+    def convert_to_dto(model: "AnimeTagModel") -> "AnimeTagData":
+        from src.python.dto.AnimeTagData import AnimeTagData
+        converted_dict = BaseModel.delete_model_dict_key(
+            model_object_dict = model.get_all_data_by_dict()
+        )
+
+        return AnimeTagData.create_object(**converted_dict)
